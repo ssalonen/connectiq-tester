@@ -14,7 +14,7 @@ ENV CONNECT_IQ_HOME=/connectiq
 RUN mkdir -p ${CONNECT_IQ_HOME}
 
 # hardcoding the version for now
-ENV CONNECT_IQ_VERSION=8.1.1
+ENV CONNECT_IQ_VERSION=8.4.0
 
 # download the SDK
 COPY downloader.sh /root/downloader.sh
@@ -26,6 +26,11 @@ COPY ciq.zip /tmp/ciq.zip
 RUN unzip /tmp/ciq.zip -d /connectiq
 
 FROM ubuntu:jammy AS tester
+
+LABEL org.opencontainers.image.authors="Sami Salonen"
+LABEL org.opencontainers.image.version="2.7.0"
+LABEL org.opencontainers.image.description="ConnectIQ tester"
+LABEL org.opencontainers.image.source=https://github.com/ssalonen/connectiq-tester
 
 # install required dependencies
 # libwebkit2gtk-4.0-37, libusb-1.0-0, libsm6 and xvfb are required by the simulator

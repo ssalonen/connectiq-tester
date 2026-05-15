@@ -4,7 +4,7 @@ This is a fork of the project: https://github.com/matco/connectiq-tester
 
 ConnectIQ Tester is a Docker container image that can be used to test your Garmin Connect IQ app on multiple devices automatically, when run it will find all supported devices, builds your app using the 'DEBUG' release for each device, then for each device, loads the app into the simulator, takes multiple screenshots, then closes the simulator and runs any unit tests. The test results and screenshots and all collated into an HTML test report.
 
-The repo currently contains ConnectIQ SDK version `8.1.1` and the device files and fonts retrieved on `2025-05-26` from the SDK directory
+The image currently contains ConnectIQ SDK version `8.4.0` and the device files retrieved on `2025-12-27`.
 
 ## Usage
 

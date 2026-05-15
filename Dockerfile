@@ -20,10 +20,10 @@ ENV CONNECT_IQ_VERSION=8.4.0
 COPY downloader.sh /root/downloader.sh
 RUN /root/downloader.sh $CONNECT_IQ_HOME $CONNECT_IQ_VERSION
 
-# manage device files
-# TODO find a way to download device bits from Garmin website
-COPY ciq.zip /tmp/ciq.zip
-RUN unzip /tmp/ciq.zip -d /connectiq
+# download device files matching SDK 8.4.0 from matco/connectiq-tester
+RUN wget -q https://github.com/matco/connectiq-tester/raw/8bf6a15/devices.zip -O /tmp/devices.zip \
+    && unzip /tmp/devices.zip -d ${CONNECT_IQ_HOME} \
+    && rm /tmp/devices.zip
 
 FROM ubuntu:jammy AS tester
 

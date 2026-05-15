@@ -42,6 +42,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            garmin_username=${{ secrets.GARMIN_USERNAME }}
-            garmin_password=${{ secrets.GARMIN_PASSWORD }}

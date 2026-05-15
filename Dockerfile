@@ -20,19 +20,10 @@ ENV CONNECT_IQ_VERSION=8.4.0
 COPY downloader.sh /root/downloader.sh
 RUN /root/downloader.sh $CONNECT_IQ_HOME $CONNECT_IQ_VERSION
 
-# download device files and fonts using connect-iq-sdk-manager-cli
-# requires GARMIN_USERNAME and GARMIN_PASSWORD build secrets
-RUN curl -s https://raw.githubusercontent.com/lindell/connect-iq-sdk-manager-cli/master/install.sh | sh -s -- -b /usr/local/bin
-RUN --mount=type=secret,id=garmin_username \
-    --mount=type=secret,id=garmin_password \
-    GARMIN_USERNAME=$(cat /run/secrets/garmin_username) \
-    GARMIN_PASSWORD=$(cat /run/secrets/garmin_password) \
-    connect-iq-sdk-manager login && \
-    HASH=$(connect-iq-sdk-manager agreement view | sha256sum | cut -d' ' -f1) && \
-    connect-iq-sdk-manager agreement accept --agreement-hash "$HASH" && \
-    connect-iq-sdk-manager device download --download-all --include-fonts && \
-    cp -r /root/.Garmin/ConnectIQ/Devices ${CONNECT_IQ_HOME}/ && \
-    cp -r /root/.Garmin/ConnectIQ/Fonts ${CONNECT_IQ_HOME}/
+# download device files matching SDK 8.4.0 from matco/connectiq-tester
+RUN wget -q https://github.com/matco/connectiq-tester/raw/8bf6a15/devices.zip -O /tmp/devices.zip \
+    && unzip /tmp/devices.zip -d ${CONNECT_IQ_HOME} \
+    && rm /tmp/devices.zip
 
 FROM ubuntu:jammy AS tester
 

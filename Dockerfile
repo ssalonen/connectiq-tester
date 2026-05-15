@@ -20,10 +20,19 @@ ENV CONNECT_IQ_VERSION=8.4.0
 COPY downloader.sh /root/downloader.sh
 RUN /root/downloader.sh $CONNECT_IQ_HOME $CONNECT_IQ_VERSION
 
-# manage device files
-# TODO find a way to download device bits from Garmin website
-COPY ciq.zip /tmp/ciq.zip
-RUN unzip /tmp/ciq.zip -d /connectiq
+# download device files and fonts using connect-iq-sdk-manager-cli
+# requires GARMIN_USERNAME and GARMIN_PASSWORD build secrets
+RUN curl -s https://raw.githubusercontent.com/lindell/connect-iq-sdk-manager-cli/master/install.sh | sh -s -- -b /usr/local/bin
+RUN --mount=type=secret,id=garmin_username \
+    --mount=type=secret,id=garmin_password \
+    GARMIN_USERNAME=$(cat /run/secrets/garmin_username) \
+    GARMIN_PASSWORD=$(cat /run/secrets/garmin_password) \
+    connect-iq-sdk-manager login && \
+    HASH=$(connect-iq-sdk-manager agreement view | sha256sum | cut -d' ' -f1) && \
+    connect-iq-sdk-manager agreement accept --agreement-hash "$HASH" && \
+    connect-iq-sdk-manager device download --download-all --include-fonts && \
+    cp -r /root/.Garmin/ConnectIQ/Devices ${CONNECT_IQ_HOME}/ && \
+    cp -r /root/.Garmin/ConnectIQ/Fonts ${CONNECT_IQ_HOME}/
 
 FROM ubuntu:jammy AS tester
 
